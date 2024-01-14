@@ -4,7 +4,7 @@ import (
 	"flag"
 	"fmt"
 
-	"github.com/mreza101/gonn/nn"
+	"github.com/mreza101/gonn/ch1/nn"
 )
 
 // Declare a training data set

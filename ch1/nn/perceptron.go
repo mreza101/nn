@@ -11,10 +11,11 @@ type Perceptron struct {
 	weights  []float64
 	bias     float64
 	activate ActivationFunction
+	learningRate float64
 }
 
 // NewPerceptron creates a new perceptron with random weights and bias.
-func NewPerceptron(numInputs int, activate ActivationFunction) *Perceptron {
+func NewPerceptron(numInputs int, activate ActivationFunction, learningRate float64``) *Perceptron {
 	weights := make([]float64, numInputs)
 	for i := range weights {
 		weights[i] = rand.Float64()
@@ -23,6 +24,7 @@ func NewPerceptron(numInputs int, activate ActivationFunction) *Perceptron {
 		weights:  weights,
 		bias:     rand.Float64(),
 		activate: activate,
+		learningRate: learningRate,
 	}
 }
 
@@ -40,9 +42,9 @@ func (p *Perceptron) Train(inputs []float64, target float64) {
 	guess := p.FeedForward(inputs)
 	err := target - guess
 	for i := range p.weights {
-		p.weights[i] += err * inputs[i]
+		p.weights[i] += p.learningRate * err * inputs[i]
 	}
-	p.bias += err
+	p.bias += p.learningRate * err
 }
 
 // TrainAll trains the perceptron on a given set of training data.

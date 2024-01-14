@@ -21,7 +21,7 @@ var epochs = flag.Int("epochs", 10, "Number of epochs to train for")
 // Main function
 func main() {
 	// Create a new perceptron
-	p := nn.NewPerceptron(2, nn.Step)
+	p := nn.NewPerceptron(2, nn.Step, 0.2)
 	// Train the perceptron
 	p.TrainAll(trainingData, *epochs)
 	// Test the perceptron

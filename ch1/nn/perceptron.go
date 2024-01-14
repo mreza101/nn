@@ -8,22 +8,22 @@ import (
 type ActivationFunction func(float64) float64
 
 type Perceptron struct {
-	weights  []float64
-	bias     float64
-	activate ActivationFunction
+	weights      []float64
+	bias         float64
+	activate     ActivationFunction
 	learningRate float64
 }
 
 // NewPerceptron creates a new perceptron with random weights and bias.
-func NewPerceptron(numInputs int, activate ActivationFunction, learningRate float64``) *Perceptron {
+func NewPerceptron(numInputs int, activate ActivationFunction, learningRate float64) *Perceptron {
 	weights := make([]float64, numInputs)
 	for i := range weights {
 		weights[i] = rand.Float64()
 	}
 	return &Perceptron{
-		weights:  weights,
-		bias:     rand.Float64(),
-		activate: activate,
+		weights:      weights,
+		bias:         rand.Float64(),
+		activate:     activate,
 		learningRate: learningRate,
 	}
 }

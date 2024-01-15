@@ -10,8 +10,6 @@ type Data struct {
 	Target float64
 }
 
-type ActivationFunction func(float64) float64
-
 type Neuron struct {
 	w []float64      // Last one is bias.
 	g ActivationType // Type of activation function.
@@ -35,14 +33,12 @@ func dot(a, b []float64) float64 {
 }
 
 // FeedForward calculates the output of the perceptron for a given input.
-// The input must have an extra 1 at the end for the virtual bias input.
 func (p *Neuron) FeedForward(inputs []float64) float64 {
 	acFunc := ActivationFuncs[p.g]
 	return acFunc(dot(inputs, p.w[1:]) + p.w[0])
 }
 
 // Train trains the perceptron on a given input and target.
-// The input must have an extra 1 at the end for the virtual bias input.
 func (p *Neuron) Train(inputs []float64, target float64, learningRate float64) {
 	output := p.FeedForward(inputs)
 	delta := (target - output) * ActivationPrimes[p.g](output)

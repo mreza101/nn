@@ -30,10 +30,51 @@ func (n *Network) FeedForward(inputs []float64) []float64 {
 }
 
 // Train trains the network on a given input and target using the backpropagation algorithm.
+// Assumptions:
+//  1. The length of targets is equal to the number of output units in the output layer, which is layer 0.
+//  2. The length of inputs is equal to the number of input units in the input layer, which is the last layer.
 func (n *Network) Train(inputs, targets []float64, learningRate float64) {
-	outs := n.FeedForward(inputs)
-	n.layers[0].Train(outs, targets, learningRate)
-	// TODO: fix this. I need to keep the delta of each layer, starting from the output layer, so that I can calculate the delta of the previous layer.
+	// Step 1 - Feed forward and compute the output of each layer.
+	n.FeedForward(inputs) // We ignore the output because we already have it in n.outputs.
+
+	// Step 2 - Calculate the deltas of all units of all layers. Starting with the output layer.
+	deltas := make([][]float64, len(n.layers)) // deltas[i][j] is the delta of the jth unit of the ith layer.
+
+	//   Step 2.1 - Calculate the deltas of the output layer.
+	acPrime := ActivationPrimes[n.layers[0].g] // Derivative of the activation function of the output layer.
+	output := n.outputs[0]                     // Output of the output layer.
+	deltas[0] = make([]float64, len(output))   // Deltas of the output layer.
+	for i := range output {                    // Iterate over all output units.
+		deltas[0][i] = (targets[i] - output[i]) * acPrime(output[i])
+	}
+
+	//   Step 2.2 - Calculate the deltas of the hidden layers.
+	for i := 1; i < len(n.layers); i++ { // Iterate over all hidden layers.
+		acPrime = ActivationPrimes[n.layers[i].g] // Derivative of the activation function of the hidden layer.
+		output = n.outputs[i]                     // Output of the hidden layer.
+		deltas[i] = make([]float64, len(output))  // Deltas of the hidden layer.
+		for j := range output {                   // Iterate over all hidden units.
+			// Calculate the error for each hidden neuron by looking at the errors of the output neurons
+			deltas[i][j] = 0
+			for k := range n.layers[i-1].w { // Iterate over all output units of the layer above.
+				deltas[i][j] += deltas[i-1][k] * n.layers[i-1].w[k][j+1] // TODO: Verify this.
+			}
+			deltas[i][j] *= acPrime(output[j])
+		}
+	}
+
+	// Step 3 - Update the weights of all layers.
+	for i := range n.layers { // Iterate over all layers.
+		for j := range n.layers[i].w { // Iterate over all units of the layer.
+			delta := deltas[i][j]
+			factor := learningRate * delta
+			n.layers[i].w[j][0] += factor // Adjust bias.
+			prevInput := n.layers[i].w[j]
+			for k := range prevInput {
+				n.layers[i].w[j][k+1] += factor * prevInput[k]
+			}
+		}
+	}
 }
 
 // TrainAll trains the network on a given set of training data.

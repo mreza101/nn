@@ -1,4 +1,4 @@
-package network
+package nn
 
 func NewVector(n int) []float64 {
 	return make([]float64, n)

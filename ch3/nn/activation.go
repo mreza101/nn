@@ -1,8 +1,9 @@
 // File to contain activation functions.
-package network
+package nn
 
 import "math"
 
+// ActivationType is the type of the different activation functions.
 type ActivationType int
 
 const (
@@ -11,6 +12,9 @@ const (
 	AReLU
 	ATanh
 )
+
+// ActivationFunction is the type of the different activation functions.
+type ActivationFunction func(float64) float64
 
 var (
 	ActivationFuncs = map[ActivationType]ActivationFunction{

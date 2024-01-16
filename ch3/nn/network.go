@@ -2,8 +2,8 @@ package nn
 
 // Network is a muli-layer network of perceptrons.
 type Network struct {
-	layers  []*Layer    // The first layer is the output layer, the last layer is the input layer
-	outputs [][]float64 // The outputs of each layer
+	layers  []*Layer    // The first layer (layer 0) is the output layer, the last layer is the input layer
+	outputs [][]float64 // Contains L+1, 0..L, entries. The outputs of each layer. The output of layer l is the input of layer l-1. outputs[L] is the input of the network.
 }
 
 // NewNetwork creates a new empty network.
@@ -21,7 +21,8 @@ func (n *Network) AddLayer(numOutputs, numInputs int, act ActivationType) {
 
 // FeedForward calculates the output of the network for a given input.
 func (n *Network) FeedForward(inputs []float64) []float64 {
-	n.outputs = make([][]float64, len(n.layers))
+	n.outputs = make([][]float64, len(n.layers)+1)
+	n.outputs[len(n.layers)] = inputs // Dummy entry so that we have the inputs in the same array during backpropagation.
 	for i := len(n.layers) - 1; i >= 0; i-- {
 		n.outputs[i] = n.layers[i].FeedForward(inputs)
 		inputs = n.outputs[i]
@@ -42,8 +43,8 @@ func (n *Network) Train(inputs, targets []float64, learningRate float64) {
 
 	//   Step 2.1 - Calculate the deltas of the output layer.
 	acPrime := ActivationPrimes[n.layers[0].g] // Derivative of the activation function of the output layer.
-	output := n.outputs[0]                     // Output of the output layer.
-	deltas[0] = make([]float64, len(output))   // Deltas of the output layer.
+	output := n.outputs[0]                     // Output of the output layer (layer 0).
+	deltas[0] = make([]float64, len(output))   // Deltas of the output layer (layer 0).
 	for i := range output {                    // Iterate over all output units.
 		deltas[0][i] = (targets[i] - output[i]) * acPrime(output[i])
 	}
@@ -64,14 +65,13 @@ func (n *Network) Train(inputs, targets []float64, learningRate float64) {
 	}
 
 	// Step 3 - Update the weights of all layers.
-	for i := range n.layers { // Iterate over all layers.
-		for j := range n.layers[i].w { // Iterate over all units of the layer.
-			delta := deltas[i][j]
-			factor := learningRate * delta
-			n.layers[i].w[j][0] += factor // Adjust bias.
-			prevInput := n.layers[i].w[j]
-			for k := range prevInput {
-				n.layers[i].w[j][k+1] += factor * prevInput[k]
+	for l := range n.layers { // Iterate over all layers.
+		w := n.layers[l].w // Weights of the layer.
+		for j := range w { // Iterate over all units of the layer.
+			factor := learningRate * deltas[l][j]
+			w[j][0] += factor         // Adjust bias.
+			for k := range w[j][1:] { // Adjust weights of all inputs.
+				w[j][k+1] += factor * n.outputs[l+1][j] // outputs[l+1] is the input to layer l.
 			}
 		}
 	}

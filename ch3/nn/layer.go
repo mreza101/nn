@@ -1,6 +1,8 @@
 package nn
 
-import "math/rand"
+import (
+	"math/rand"
+)
 
 // Data is a struct that holds the input and targets for a given training example.
 type Data struct {
@@ -22,6 +24,7 @@ func NewLayer(numInputs, numOutputs int, act ActivationType) *Layer {
 		for j := range weights[i] {
 			weights[i][j] = rand.Float64()
 		}
+
 	}
 	return &Layer{w: weights, g: act}
 }

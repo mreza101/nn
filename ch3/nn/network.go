@@ -15,8 +15,8 @@ func NewNetwork() *Network {
 // numUnnumOutputsts is the number of neurons, or output units, in the layer.
 // numInputs is the number of inputs to the layer. Also the number of outputs of the previous layer.
 // act is the activation function of the layer.
-func (n *Network) AddLayer(numOutputs, numInputs int, act ActivationType) {
-	n.layers = append(n.layers, NewLayer(numOutputs, numInputs, act))
+func (n *Network) AddLayer(numInputs, numOutputs int, act ActivationType) {
+	n.layers = append(n.layers, NewLayer(numInputs, numOutputs, act))
 }
 
 // FeedForward calculates the output of the network for a given input.

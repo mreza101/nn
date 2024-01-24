@@ -78,24 +78,24 @@ func (n *Network) Train(inputs, targets []float64, learningRate float64) {
 }
 
 // TrainAll trains the network on a given set of training data.
-func (n *Network) TrainAll(trainingData []Data, epochs int, learningRate float64) {
+func (n *Network) TrainAll(inputs, targets [][]float64, epochs int, learningRate float64) {
 	for i := 0; i < epochs; i++ {
-		for _, data := range trainingData {
-			n.Train(data.Input, data.Targets, learningRate)
+		for t := range inputs {
+			n.Train(inputs[t], targets[t], learningRate)
 		}
 	}
 }
 
 // Test calculates the accuracy of the network for a given set of test data.
-func (n *Network) Test(testData []Data) float64 {
+func (n *Network) Test(inputs, targets [][]float64) float64 {
 	numCorrect := 0
-	for _, data := range testData {
-		outputs := n.FeedForward(data.Input)
-		if maxIndex(outputs) == maxIndex(data.Targets) {
+	for t := range inputs {
+		outputs := n.FeedForward(inputs[t])
+		if maxIndex(outputs) == maxIndex(targets[t]) {
 			numCorrect++
 		}
 	}
-	return float64(numCorrect) / float64(len(testData))
+	return float64(numCorrect) / float64(len(inputs))
 }
 
 func maxIndex(xs []float64) int {

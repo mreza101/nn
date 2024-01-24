@@ -23,6 +23,6 @@ func (p *Neuron) Train(inputs []float64, target float64, learningRate float64) {
 }
 
 // TrainAll trains the perceptron on a given set of training data.
-func (p *Neuron) TrainAll(trainingData []Data, epochs int, learningRate float64) {
-	(*Network)(p).TrainAll(trainingData, epochs, learningRate)
+func (p *Neuron) TrainAll(inputs, outputs [][]float64, epochs int, learningRate float64) {
+	(*Network)(p).TrainAll(inputs, outputs, epochs, learningRate)
 }

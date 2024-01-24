@@ -1,0 +1,7 @@
+datasets/adult/*
+datasets/adult/old.adult.names
+datasets/dataverse_files/*
+datasets/iris/*
+datasets/mnist/*
+datasets/wine/*
+.DS_Store

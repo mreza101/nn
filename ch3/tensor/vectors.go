@@ -1,4 +1,5 @@
-package nn
+// Package tensor provides functions for manipulating vectors and matrices.
+package tensor
 
 func NewVector(n int) []float64 {
 	return make([]float64, n)

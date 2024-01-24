@@ -4,12 +4,6 @@ import (
 	"math/rand"
 )
 
-// Data is a struct that holds the input and targets for a given training example.
-type Data struct {
-	Input   []float64
-	Targets []float64
-}
-
 // Neuron holds the weights and activation function for a single neuron.
 type Layer struct {
 	w [][]float64    // Each row correspond to one output unit for this layer. Each row has one extra element (the first one) for bias.
@@ -63,10 +57,10 @@ func (p *Layer) Train(inputs []float64, targets []float64, learningRate float64)
 }
 
 // TrainAll trains the perceptron on a given set of training data.
-func (p *Layer) TrainAll(trainingData []Data, epochs int, learningRate float64) {
+func (p *Layer) TrainAll(inputs, targets [][]float64, epochs int, learningRate float64) {
 	for i := 0; i < epochs; i++ {
-		for _, data := range trainingData {
-			p.Train(data.Input, data.Targets, learningRate)
+		for n := range inputs {
+			p.Train(inputs[n], targets[n], learningRate)
 		}
 	}
 }
